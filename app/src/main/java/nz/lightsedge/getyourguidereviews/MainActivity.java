@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mReviewAdapter);
 
+        // Setup Floating Button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         if (reviewData != null && reviewData.getData() != null) {
 
+            mReviewData = reviewData;
             mFilterHelper.setReviews(reviewData.getData());
             filterReviews();
         }
