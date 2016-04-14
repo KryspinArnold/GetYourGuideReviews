@@ -42,6 +42,7 @@ import retrofit.client.Response;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+    private ReviewDataModel mReviewData;
     private List<ReviewModel> mReviews;
     private ReviewAdapter mReviewAdapter;
 
@@ -54,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
     ReviewService mMockService;
 
     @Inject
+    MainApp mApp;
+
+    @Inject
     ErrorHandler mErrorHandler;
 
     @Override
@@ -64,12 +68,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ReviewDataModel reviewData = new ReviewDataModel();
-        mReviews = reviewData.getData();
+        mReviewData = new ReviewDataModel();
+        mReviews = mReviewData.getData();
 
         // Create the recycler view and adapter
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mReviewAdapter = new ReviewAdapter(this, mReviews);
+        mReviewAdapter = new ReviewAdapter(mReviews);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mReviewAdapter);
 
@@ -98,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.d(TAG, error.getMessage());
                 Log.d(TAG, error.getUrl());
+                showData(mApp.getCachedReviewData());
             }
         });
     }
@@ -109,15 +114,8 @@ public class MainActivity extends AppCompatActivity {
     private void showData(ReviewDataModel reviewData) {
 
         if (reviewData != null && reviewData.getData() != null) {
-            Log.d(TAG, reviewData.getData().get(0).getMessage());
 
             mReviews.clear();
-            mReviews.addAll(reviewData.getData());
-            mReviews.addAll(reviewData.getData());
-            mReviews.addAll(reviewData.getData());
-            mReviews.addAll(reviewData.getData());
-            mReviews.addAll(reviewData.getData());
-            mReviews.addAll(reviewData.getData());
             mReviews.addAll(reviewData.getData());
             Log.d(TAG, "Reviews Size: " + mReviews.size());
             runOnUiThread(refreshAdapterRunnable);
@@ -182,4 +180,14 @@ public class MainActivity extends AppCompatActivity {
             mReviewAdapter.notifyDataSetChanged();
         }
     };
+
+    /**
+     * Save the current data in the shared preferences onPause
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        mApp.setCachedReviewData(mReviewData);
+    }
 }

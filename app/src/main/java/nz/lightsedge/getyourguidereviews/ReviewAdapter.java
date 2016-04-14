@@ -31,16 +31,15 @@ import nz.lightsedge.getyourguidereviews.model.ReviewModel;
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder> {
 
     private List<ReviewModel> mReviews;
-    private static LayoutInflater mInflater = null;
+    private static final String TAG = "ReviewAdapter";
 
-    public ReviewAdapter(FragmentActivity activity, List<ReviewModel> reviews) {
+    public ReviewAdapter(List<ReviewModel> reviews) {
         this.mReviews = reviews;
-        this.mInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getItemCount() {
-        Log.i("TAG", "SIZE: " + this.mReviews.size());
+        Log.d(TAG, "SIZE: " + this.mReviews.size());
         return this.mReviews.size();
     }
 
