@@ -15,27 +15,20 @@
  */
 package nz.lightsedge.getyourguidereviews;
 
-import android.app.Application;
 import android.content.Context;
+import android.widget.Toast;
 
-import nz.lightsedge.getyourguidereviews.module.ErrorHandlerModule;
-import nz.lightsedge.getyourguidereviews.module.MainAppModule;
+import nz.lightsedge.getyourguidereviews.enums.ErrorEnum;
 
-public class MainApp extends Application {
+public class ErrorHandler {
 
-    private MainAppComponent mComponent;
+    private Context mContext;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        mComponent = DaggerMainAppComponent.builder()
-                .mainAppModule(new MainAppModule(this))
-                .errorHandlerModule(new ErrorHandlerModule(this))
-                .build();
-        mComponent.inject(this);
+    public ErrorHandler(Context context) {
+        this.mContext = context;
     }
 
-    public static MainAppComponent getComponent(Context context) {
-        return ((MainApp) context.getApplicationContext()).mComponent;
+    public void showError(ErrorEnum errorEnum) {
+        Toast.makeText(mContext, errorEnum.getStringId(), Toast.LENGTH_LONG).show();
     }
 }

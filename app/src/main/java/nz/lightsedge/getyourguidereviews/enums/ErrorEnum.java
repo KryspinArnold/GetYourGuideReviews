@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nz.lightsedge.getyourguidereviews;
+package nz.lightsedge.getyourguidereviews.enums;
 
-import javax.inject.Singleton;
+import nz.lightsedge.getyourguidereviews.R;
 
-import dagger.Component;
-import nz.lightsedge.getyourguidereviews.mock.MockServiceModule;
-import nz.lightsedge.getyourguidereviews.module.ErrorHandlerModule;
-import nz.lightsedge.getyourguidereviews.module.MainAppModule;
+public enum ErrorEnum {
+    ReviewTitleBlank(R.string.error_review_no_title),
+    ReviewMessageBlank(R.string.error_review_no_message);
 
-@Singleton
-@Component(modules = {MainAppModule.class, MockServiceModule.class, ErrorHandlerModule.class})
-public interface MainAppComponent {
-    void inject(MainApp app);
-    void inject(MainActivity mainActivity);
-    void inject(NewReviewActivity newReviewActivity);
+    private int mStringId;
+
+    ErrorEnum(int stringId) {
+        mStringId = stringId;
+    }
+
+    public int getStringId() {
+        return mStringId;
+    }
 }
-

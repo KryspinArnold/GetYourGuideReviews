@@ -15,23 +15,22 @@
  */
 package nz.lightsedge.getyourguidereviews;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import nz.lightsedge.getyourguidereviews.enums.IntentCode;
+import nz.lightsedge.getyourguidereviews.enums.IntentExtra;
 import nz.lightsedge.getyourguidereviews.model.ReviewDataModel;
 import nz.lightsedge.getyourguidereviews.model.ReviewModel;
 import retrofit.Callback;
@@ -68,8 +67,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startNewReviewActivity();
             }
         });
 
@@ -114,25 +112,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    /**
+     * Starts the activity to create a new review
+     */
+    private void startNewReviewActivity() {
+
+        Intent intent = new Intent(this, NewReviewActivity.class);
+        this.startActivityForResult(intent, IntentCode.NewReviewActivity.ordinal());
     }
 
+    /**
+     * Gets the result from the new review
+     */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (resultCode == RESULT_OK) {
+            if (requestCode == IntentCode.NewReviewActivity.ordinal()) {
+
+                String title = data.getStringExtra(IntentExtra.ReviewTitle.toString());
+                String message = data.getStringExtra(IntentExtra.ReviewMessage.toString());
+                Log.i(TAG, "Review Message: " + message);
+
+                ReviewModel review = new ReviewModel(title, message, "GetYourGuide User", "April 2016");
+                saveReview(review);
+            }
         }
+    }
 
-        return super.onOptionsItemSelected(item);
+    private void saveReview(ReviewModel review) {
+
     }
 }

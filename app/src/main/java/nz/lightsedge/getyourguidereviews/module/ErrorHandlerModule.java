@@ -13,20 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nz.lightsedge.getyourguidereviews;
+package nz.lightsedge.getyourguidereviews.module;
 
-import javax.inject.Singleton;
+import android.content.Context;
 
-import dagger.Component;
-import nz.lightsedge.getyourguidereviews.mock.MockServiceModule;
-import nz.lightsedge.getyourguidereviews.module.ErrorHandlerModule;
-import nz.lightsedge.getyourguidereviews.module.MainAppModule;
+import dagger.Module;
+import dagger.Provides;
+import nz.lightsedge.getyourguidereviews.ErrorHandler;
 
-@Singleton
-@Component(modules = {MainAppModule.class, MockServiceModule.class, ErrorHandlerModule.class})
-public interface MainAppComponent {
-    void inject(MainApp app);
-    void inject(MainActivity mainActivity);
-    void inject(NewReviewActivity newReviewActivity);
+@Module
+public class ErrorHandlerModule {
+
+    private final Context mContext;
+
+    public ErrorHandlerModule(Context context) {
+        this.mContext = context;
+    }
+
+    @Provides
+    ErrorHandler provideErrorHandler() {
+        return new ErrorHandler(mContext);
+    }
 }
-

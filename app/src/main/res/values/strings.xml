@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">GetYourGuide - Reviews</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_save">Save</string>
+    <string name="hint_review_title">Title</string>
+    <string name="hint_review_message">Type your review here</string>
+    <string name="activity_new_review">New Review</string>
+
+    <string name="error_review_no_title">Review requires a title</string>
+    <string name="error_review_no_message">Review requires a message</string>
 </resources>
