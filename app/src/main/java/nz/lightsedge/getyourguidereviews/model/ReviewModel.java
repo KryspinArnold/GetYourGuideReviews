@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package nz.lightsedge.getyourguidereviews.models;
+package nz.lightsedge.getyourguidereviews.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class ReviewModel {
+
+    public ReviewModel(String title, String message, String author, String date) {
+        this.mTitle = title;
+        this.mMessage = message;
+        this.mAuthor = author;
+        this.mDate = date;
+    }
 
     @SerializedName("review_id")
     @Expose
@@ -36,6 +42,10 @@ public class ReviewModel {
     @SerializedName("message")
     @Expose
     private String mMessage;
+
+    @SerializedName("author")
+    @Expose
+    private String mAuthor;
 
     @SerializedName("foreignLanguage")
     @Expose
@@ -63,6 +73,10 @@ public class ReviewModel {
 
     public String getMessage() {
         return mMessage;
+    }
+
+    public String getAuthor() {
+        return mAuthor;
     }
 
     public Boolean getForeignLanguage() {

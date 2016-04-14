@@ -18,6 +18,8 @@ package nz.lightsedge.getyourguidereviews;
 import android.app.Application;
 import android.content.Context;
 
+import nz.lightsedge.getyourguidereviews.module.MainAppModule;
+
 public class MainApp extends Application {
 
     private MainAppComponent mComponent;

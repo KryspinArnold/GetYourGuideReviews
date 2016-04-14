@@ -13,20 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nz.lightsedge.getyourguidereviews;
+package nz.lightsedge.getyourguidereviews.module;
 
 import dagger.Module;
 import dagger.Provides;
-import retrofit.RestAdapter;
+import nz.lightsedge.getyourguidereviews.MainApp;
 
 @Module
-public class ServiceModule {
+public class MainAppModule {
+
+    private final MainApp mApp;
+
+    public MainAppModule(MainApp app) {
+        this.mApp = app;
+    }
 
     @Provides
-    ReviewService provideReviewService() {
-        return new RestAdapter.Builder()
-                .setEndpoint(Config.URL)
-                .build()
-                .create(ReviewService.class);
+    MainApp provideMainApp() {
+        return mApp;
     }
 }

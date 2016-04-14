@@ -19,6 +19,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import nz.lightsedge.getyourguidereviews.mock.MockServiceModule;
+import nz.lightsedge.getyourguidereviews.module.MainAppModule;
 
 @Singleton
 @Component(modules = {MainAppModule.class, MockServiceModule.class})

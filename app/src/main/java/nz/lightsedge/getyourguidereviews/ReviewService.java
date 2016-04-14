@@ -15,7 +15,7 @@
  */
 package nz.lightsedge.getyourguidereviews;
 
-import nz.lightsedge.getyourguidereviews.models.ReviewDataModel;
+import nz.lightsedge.getyourguidereviews.model.ReviewDataModel;
 import retrofit.Callback;
 import retrofit.http.GET;
 

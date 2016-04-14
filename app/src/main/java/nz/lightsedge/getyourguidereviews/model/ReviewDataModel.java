@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package nz.lightsedge.getyourguidereviews.models;
+package nz.lightsedge.getyourguidereviews.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReviewDataModel {
@@ -33,7 +33,7 @@ public class ReviewDataModel {
 
     @SerializedName("data")
     @Expose
-    private List<ReviewModel> mData;
+    private List<ReviewModel> mData = new ArrayList<>();
 
     public Boolean getStatus() {
         return mStatus;
