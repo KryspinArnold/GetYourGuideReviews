@@ -32,7 +32,7 @@ public class MockServiceModule {
     @Named("mockService")
     ReviewService provideReviewService(Client client) {
         return new RestAdapter.Builder()
-                .setEndpoint(Config.URL)
+                .setEndpoint(Config.MOCK_URL)
                 .setClient(client)
                 .build()
                 .create(ReviewService.class);

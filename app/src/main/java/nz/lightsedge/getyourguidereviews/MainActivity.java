@@ -24,6 +24,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import java.util.List;
 
@@ -45,9 +46,10 @@ public class MainActivity extends AppCompatActivity {
     private ReviewDataModel mReviewData;
     private List<ReviewModel> mReviews;
     private ReviewAdapter mReviewAdapter;
+    private ProgressBar mProgressBar;
 
     @Inject
-    @Named("mockService")
+    @Named("realService")
     ReviewService mReviewService;
 
     @Inject
@@ -67,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        mProgressBar.setVisibility(View.VISIBLE);
 
         mReviewData = new ReviewDataModel();
         mReviews = mReviewData.getData();
@@ -91,17 +96,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void success(ReviewDataModel reviewDataModel, Response response) {
 
-                Log.d(TAG, response.toString());
-                Log.d(TAG, reviewDataModel.toString());
-
+                Log.d(TAG, "Data Downloaded Successfully");
+                mProgressBar.setVisibility(View.GONE);
                 showData(reviewDataModel);
             }
 
             @Override
             public void failure(RetrofitError error) {
 
-                Log.d(TAG, error.getMessage());
                 Log.d(TAG, error.getUrl());
+                Log.d(TAG, error.getMessage());
+                mProgressBar.setVisibility(View.GONE);
+                mErrorHandler.showError(ErrorEnum.NetworkError);
                 showData(mApp.getCachedReviewData());
             }
         });

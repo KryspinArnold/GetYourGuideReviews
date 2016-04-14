@@ -15,6 +15,8 @@
  */
 package nz.lightsedge.getyourguidereviews.module;
 
+import javax.inject.Named;
+
 import dagger.Module;
 import dagger.Provides;
 import nz.lightsedge.getyourguidereviews.Config;
@@ -25,6 +27,7 @@ import retrofit.RestAdapter;
 public class ServiceModule {
 
     @Provides
+    @Named("realService")
     ReviewService provideReviewService() {
         return new RestAdapter.Builder()
                 .setEndpoint(Config.URL)

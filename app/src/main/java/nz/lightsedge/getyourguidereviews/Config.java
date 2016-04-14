@@ -17,5 +17,6 @@ package nz.lightsedge.getyourguidereviews;
 
 public class Config {
 
-    public static final String URL = "http://lightsedge.nz";
+    public static final String URL = "https://www.getyourguide.com";
+    public static final String MOCK_URL = "http://lightsedge.nz";
 }
