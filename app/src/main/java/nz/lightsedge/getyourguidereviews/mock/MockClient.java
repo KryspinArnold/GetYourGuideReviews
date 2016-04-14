@@ -18,6 +18,7 @@ package nz.lightsedge.getyourguidereviews.mock;
 import android.net.Uri;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 
@@ -26,8 +27,12 @@ import retrofit.client.Request;
 import retrofit.client.Response;
 import retrofit.mime.TypedByteArray;
 
+/**
+ * Mocks the Retrofit client by creating dummy responses
+ */
 public class MockClient implements Client {
 
+    private static final String TAG = "MockClient";
     private static final int HTTP_OK_STATUS = 200;
 
     private static final String RESPONSE_JSON = "{\"status\":true,"
@@ -48,10 +53,26 @@ public class MockClient implements Client {
     public Response execute(Request request) throws IOException {
         Uri uri = Uri.parse(request.getUrl());
 
-        Log.i("MOCK SERVER", "fetching uri: " + uri.toString());
+        Log.d(TAG, "Uri: " + uri.toString());
+
+        byte[] body;
+
+        // Mock the create review, by returning the same posted data
+        if (uri.getPath().equals("/review/create/")) {
+
+            Log.d(TAG, "Create Review");
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            request.getBody().writeTo(out);
+            body = out.toByteArray();
+        }
+        else {
+            // Mock the get reviews, by returning dummy json data
+            Log.d(TAG, "Get Reviews");
+            body = RESPONSE_JSON.getBytes();
+        }
 
         return new Response(request.getUrl(), HTTP_OK_STATUS, "nothing", Collections.EMPTY_LIST,
-                new TypedByteArray("application/json", RESPONSE_JSON.getBytes()));
+                new TypedByteArray("application/json", body));
     }
 }
 

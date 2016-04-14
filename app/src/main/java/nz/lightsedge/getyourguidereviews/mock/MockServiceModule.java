@@ -15,6 +15,7 @@
  */
 package nz.lightsedge.getyourguidereviews.mock;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -28,6 +29,7 @@ import retrofit.client.Client;
 public class MockServiceModule {
 
     @Provides
+    @Named("mockService")
     ReviewService provideReviewService(Client client) {
         return new RestAdapter.Builder()
                 .setEndpoint(Config.URL)

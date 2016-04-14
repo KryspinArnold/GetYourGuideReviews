@@ -28,7 +28,9 @@ import android.view.View;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import nz.lightsedge.getyourguidereviews.enums.ErrorEnum;
 import nz.lightsedge.getyourguidereviews.enums.IntentCode;
 import nz.lightsedge.getyourguidereviews.enums.IntentExtra;
 import nz.lightsedge.getyourguidereviews.model.ReviewDataModel;
@@ -44,7 +46,15 @@ public class MainActivity extends AppCompatActivity {
     private ReviewAdapter mReviewAdapter;
 
     @Inject
+    @Named("mockService")
     ReviewService mReviewService;
+
+    @Inject
+    @Named("mockService")
+    ReviewService mMockService;
+
+    @Inject
+    ErrorHandler mErrorHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,14 +83,12 @@ public class MainActivity extends AppCompatActivity {
 
         MainApp.getComponent(this).inject(this);
 
-        Log.i(TAG, "TEST");
-
         mReviewService.getReviewData(new Callback<ReviewDataModel>() {
             @Override
             public void success(ReviewDataModel reviewDataModel, Response response) {
 
-                Log.i(TAG, response.toString());
-                Log.i(TAG, reviewDataModel.toString());
+                Log.d(TAG, response.toString());
+                Log.d(TAG, reviewDataModel.toString());
 
                 showData(reviewDataModel);
             }
@@ -88,16 +96,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
 
-                Log.i(TAG, error.getMessage());
-                Log.i(TAG, error.getUrl());
+                Log.d(TAG, error.getMessage());
+                Log.d(TAG, error.getUrl());
             }
         });
     }
 
+    /**
+     * Update the recycler with the new review data
+     * @param reviewData
+     */
     private void showData(ReviewDataModel reviewData) {
 
         if (reviewData != null && reviewData.getData() != null) {
-            Log.i(TAG, reviewData.getData().get(0).getMessage());
+            Log.d(TAG, reviewData.getData().get(0).getMessage());
 
             mReviews.clear();
             mReviews.addAll(reviewData.getData());
@@ -107,8 +119,8 @@ public class MainActivity extends AppCompatActivity {
             mReviews.addAll(reviewData.getData());
             mReviews.addAll(reviewData.getData());
             mReviews.addAll(reviewData.getData());
-            Log.i(TAG, "Reviews Size: " + mReviews.size());
-            mReviewAdapter.notifyDataSetChanged();
+            Log.d(TAG, "Reviews Size: " + mReviews.size());
+            runOnUiThread(refreshAdapterRunnable);
         }
     }
 
@@ -132,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String title = data.getStringExtra(IntentExtra.ReviewTitle.toString());
                 String message = data.getStringExtra(IntentExtra.ReviewMessage.toString());
-                Log.i(TAG, "Review Message: " + message);
+                Log.d(TAG, "Review Message: " + message);
 
                 ReviewModel review = new ReviewModel(title, message, "GetYourGuide User", "April 2016");
                 saveReview(review);
@@ -140,7 +152,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Mocking uploading the Review to the server
+     */
     private void saveReview(ReviewModel review) {
 
+        mMockService.createReview(review, new Callback<ReviewModel>() {
+            @Override
+            public void success(ReviewModel reviewModel, Response response) {
+
+                mReviews.add(0, reviewModel);
+                runOnUiThread(refreshAdapterRunnable);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+                mErrorHandler.showError(ErrorEnum.ReviewSaveFailed);
+            }
+        });
     }
+
+    /**
+     * Use a runnable to make sure the adapter is refreshed on the ui thread
+     */
+    private Runnable refreshAdapterRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mReviewAdapter.notifyDataSetChanged();
+        }
+    };
 }

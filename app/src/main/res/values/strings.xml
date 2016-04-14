@@ -7,4 +7,5 @@
 
     <string name="error_review_no_title">Review requires a title</string>
     <string name="error_review_no_message">Review requires a message</string>
+    <string name="error_review_save_failed">Review failed to save</string>
 </resources>

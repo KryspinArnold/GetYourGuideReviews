@@ -19,7 +19,8 @@ import nz.lightsedge.getyourguidereviews.R;
 
 public enum ErrorEnum {
     ReviewTitleBlank(R.string.error_review_no_title),
-    ReviewMessageBlank(R.string.error_review_no_message);
+    ReviewMessageBlank(R.string.error_review_no_message),
+    ReviewSaveFailed(R.string.error_review_save_failed);
 
     private int mStringId;
 
