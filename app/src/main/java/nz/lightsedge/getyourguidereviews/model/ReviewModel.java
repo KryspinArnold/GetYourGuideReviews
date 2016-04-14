@@ -25,6 +25,8 @@ public class ReviewModel {
         this.mMessage = message;
         this.mAuthor = author;
         this.mDate = date;
+        this.mRating = 5.0f;
+        this.mLanguageCode = "en";
     }
 
     @SerializedName("review_id")

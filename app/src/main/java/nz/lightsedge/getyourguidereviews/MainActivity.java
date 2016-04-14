@@ -24,7 +24,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 
 import java.util.List;
 
@@ -32,21 +35,28 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import nz.lightsedge.getyourguidereviews.enums.ErrorEnum;
+import nz.lightsedge.getyourguidereviews.enums.FilterLanguageEnum;
 import nz.lightsedge.getyourguidereviews.enums.IntentCode;
 import nz.lightsedge.getyourguidereviews.enums.IntentExtra;
+import nz.lightsedge.getyourguidereviews.enums.FilterRatingEnum;
 import nz.lightsedge.getyourguidereviews.model.ReviewDataModel;
 import nz.lightsedge.getyourguidereviews.model.ReviewModel;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "MainActivity";
     private ReviewDataModel mReviewData;
-    private List<ReviewModel> mReviews;
+    private List<ReviewModel> mFilteredReviews;
     private ReviewAdapter mReviewAdapter;
     private ProgressBar mProgressBar;
+    private Spinner mRatingSpinner;
+    private Spinner mLanguageSpinner;
+    private FilterRatingEnum[] mRatings;
+    private FilterLanguageEnum[] mLanguages;
+    private FilterHelper mFilterHelper;
 
     @Inject
     @Named("realService")
@@ -67,18 +77,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Setup Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Setup Progress Bar
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mProgressBar.setVisibility(View.VISIBLE);
 
+        // Setup Spinners
+        setupSpinners();
+
         mReviewData = new ReviewDataModel();
-        mReviews = mReviewData.getData();
+        mFilterHelper = new FilterHelper(mReviewData.getData());
+        mFilteredReviews = mFilterHelper.getFilteredReviews();
 
         // Create the recycler view and adapter
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mReviewAdapter = new ReviewAdapter(mReviews);
+        mReviewAdapter = new ReviewAdapter(mFilteredReviews);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mReviewAdapter);
 
@@ -98,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.d(TAG, "Data Downloaded Successfully");
                 mProgressBar.setVisibility(View.GONE);
-                showData(reviewDataModel);
+                setData(reviewDataModel);
             }
 
             @Override
@@ -108,24 +124,32 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, error.getMessage());
                 mProgressBar.setVisibility(View.GONE);
                 mErrorHandler.showError(ErrorEnum.NetworkError);
-                showData(mApp.getCachedReviewData());
+                setData(mApp.getCachedReviewData());
             }
         });
     }
 
     /**
-     * Update the recycler with the new review data
+     * Sets the review data and refreshes the recycler
      * @param reviewData
      */
-    private void showData(ReviewDataModel reviewData) {
+    private void setData(ReviewDataModel reviewData) {
 
         if (reviewData != null && reviewData.getData() != null) {
 
-            mReviews.clear();
-            mReviews.addAll(reviewData.getData());
-            Log.d(TAG, "Reviews Size: " + mReviews.size());
-            runOnUiThread(refreshAdapterRunnable);
+            mFilterHelper.setReviews(reviewData.getData());
+            filterReviews();
         }
+    }
+
+    /**
+     * Update the recycler with the filtered review data
+     */
+    private void filterReviews() {
+        mFilteredReviews.clear();
+        mFilteredReviews.addAll(mFilterHelper.getFilteredReviews());
+        Log.d(TAG, "Reviews Size: " + mFilteredReviews.size());
+        runOnUiThread(refreshAdapterRunnable);
     }
 
     /**
@@ -138,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Gets the result from the new review
+     * Gets the result from the New Review Activity
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -165,8 +189,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void success(ReviewModel reviewModel, Response response) {
 
-                mReviews.add(0, reviewModel);
-                runOnUiThread(refreshAdapterRunnable);
+                mFilterHelper.addReview(reviewModel);
+                filterReviews();
             }
 
             @Override
@@ -195,5 +219,48 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
 
         mApp.setCachedReviewData(mReviewData);
+    }
+
+    /**
+     * Setup the filter spinners
+     */
+    private void setupSpinners() {
+
+        mRatings = FilterRatingEnum.values();
+        mRatingSpinner = (Spinner) findViewById(R.id.spinner_rating);
+        ArrayAdapter<FilterRatingEnum> ratingAdapter =
+                new ArrayAdapter<FilterRatingEnum>(this, R.layout.spinner_item, mRatings);
+        mRatingSpinner.setAdapter(ratingAdapter);
+        mRatingSpinner.setOnItemSelectedListener(this);
+
+        mLanguages = FilterLanguageEnum.values();
+        mLanguageSpinner = (Spinner) findViewById(R.id.spinner_language);
+        ArrayAdapter<FilterLanguageEnum> languageAdapter =
+                new ArrayAdapter<FilterLanguageEnum>(this, R.layout.spinner_item, mLanguages);
+        mLanguageSpinner.setAdapter(languageAdapter);
+        mLanguageSpinner.setOnItemSelectedListener(this);
+    }
+
+    /**
+     * Filter click handlers
+     */
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        if (parent.getId() == R.id.spinner_rating) {
+
+            mFilterHelper.setRatingFilter((FilterRatingEnum) parent.getSelectedItem());
+            filterReviews();
+        }
+        else if (parent.getId() == R.id.spinner_language) {
+
+            mFilterHelper.setLanguageFilter((FilterLanguageEnum) parent.getSelectedItem());
+            filterReviews();
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

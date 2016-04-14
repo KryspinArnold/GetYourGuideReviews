@@ -39,7 +39,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        Log.d(TAG, "SIZE: " + this.mReviews.size());
         return this.mReviews.size();
     }
 

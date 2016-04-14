@@ -24,7 +24,7 @@ import retrofit.http.POST;
 
 public interface ReviewService {
 
-    @GET("/berlin-l17/tempelhof-2-hour-airport-history-tour-berlin-airlift-more-t23776/reviews.json?count=5&page=0&rating=0&sortBy=date_of_review&direction=DESC")
+    @GET("/berlin-l17/tempelhof-2-hour-airport-history-tour-berlin-airlift-more-t23776/reviews.json?count=100&page=0&rating=0&sortBy=date_of_review&direction=DESC")
     void getReviewData(Callback<ReviewDataModel> response);
 
     @POST("/review/create/")

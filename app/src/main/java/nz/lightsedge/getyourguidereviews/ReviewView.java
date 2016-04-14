@@ -31,6 +31,10 @@ public class ReviewView {
     public ReviewView(ReviewModel review) {
 
         mTitle = review.getTitle();
+        if (review.getRating() != null) {
+            mTitle = String.format("[%s] %s", review.getRating(), mTitle);
+        }
+
         mMessage = review.getMessage();
         mFootnote = createFootnote(review);
     }

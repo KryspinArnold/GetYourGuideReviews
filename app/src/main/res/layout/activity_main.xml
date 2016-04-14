@@ -19,6 +19,8 @@
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways" />
 
+        <include layout="@layout/spinner_layout" />
+
     </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
